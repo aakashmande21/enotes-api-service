@@ -2,6 +2,9 @@ package com.enotes.service.impl;
 import com.enotes.dto.NoteRequestDto;
 import com.enotes.dto.NoteResponseDto;
 import com.enotes.mapper.NoteMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import  com.enotes.service.NoteService;
 import com.enotes.repository.NoteRepository;
@@ -20,33 +23,39 @@ public class NoteServiceImpl implements NoteService{
         this.noteMapper = noteMapper;
     }
 
+
+//    CREATE NOTE (Post Api logic for creating new note)
     @Override
     public NoteResponseDto saveNote(NoteRequestDto requestDto) {
 
 
         Note note = noteMapper.toEntity(requestDto);
-        System.out.println("Mapped title: " + note.getTitle());
+        System.out.println("Mapped title: " + note.getTitle());//only for print title
         Note savedNote = noteRepository.save(note);
-        System.out.println(requestDto.getTitle());
+        System.out.println(requestDto.getTitle());//only for print
         return noteMapper.toDto(savedNote);
 
     }
 
+//    GET NOTES (Get Api logic for fetching all elements with pagination)
     @Override
-    public List<Note> getAllNotes() {
+    public Page<NoteResponseDto> getAllNotes(int page, int size) {
 
-        return noteRepository.findAll();
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Note> notePage = noteRepository.findAll(pageable);
+        return notePage.map(noteMapper :: toDto);
     }
 
-    @Override
-    public Note getNoteById(Long id) {
 
-        return noteRepository.findById(id).orElse(null);
+//    GET NOTE BY ID (get note by id Api logic for fetching particular note using id)
+    @Override
+    public NoteResponseDto getNoteById(Long id) {
+
+        Note note = noteRepository.findById(id).orElseThrow(()-> new RuntimeException("Note not found with Id:"+id));
+        return noteMapper.toDto(note);
     }
 
-    @Override
-    public void deleteNote(Long id) {
-        noteRepository.deleteById(id);
 
-    }
+
 }

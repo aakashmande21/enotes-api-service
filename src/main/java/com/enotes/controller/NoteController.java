@@ -2,15 +2,12 @@ package com.enotes.controller;
 import com.enotes.dto.NoteRequestDto;
 import com.enotes.dto.NoteResponseDto;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.enotes.service.NoteService;
 //import  com.enotes.entity.Note;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -23,6 +20,8 @@ public class NoteController {
         this.noteService = noteService;
     }
 
+
+//         CREATE NOTE API
     @PostMapping
     public ResponseEntity<NoteResponseDto> createNote(@Valid @RequestBody NoteRequestDto requestDto){
 
@@ -30,6 +29,23 @@ public class NoteController {
 
         NoteResponseDto saveNote = noteService.saveNote(requestDto);
         return ResponseEntity.ok(saveNote);
+    }
+
+//    GET ALL NOTES API
+
+    @GetMapping
+    public ResponseEntity<Page<NoteResponseDto>> getAllNotes(@RequestParam(defaultValue = "0")int page, @RequestParam(defaultValue = "10")int size){
+
+        Page<NoteResponseDto> notes = noteService.getAllNotes(page, size);
+        return ResponseEntity.ok(notes);
+    }
+
+//    GET NOTE BY ID API
+
+    @GetMapping("/{id}")
+    public  ResponseEntity<NoteResponseDto> getNoteById(@PathVariable Long id){
+        NoteResponseDto note = noteService.getNoteById(id);
+        return  ResponseEntity.ok(note);
     }
 
 }

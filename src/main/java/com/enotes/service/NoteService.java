@@ -2,11 +2,17 @@ package com.enotes.service;
 import com.enotes.dto.NoteRequestDto;
 import com.enotes.dto.NoteResponseDto;
 import  com.enotes.entity.Note;
+import jakarta.persistence.Id;
+import org.springframework.data.domain.Page;
 import  java.util.List;
 public interface NoteService {
 
     NoteResponseDto saveNote(NoteRequestDto requestDto);
-    List<Note> getAllNotes();
-    Note getNoteById(Long id);
-    void  deleteNote(Long id);
+   Page <NoteResponseDto> getAllNotes(int page, int size);
+
+   NoteResponseDto getNoteById(Long id);
+
+//    List<Note> getAllNotes();
+//    Note getNoteById(Long id);
+//    void  deleteNote(Long id);
 }
